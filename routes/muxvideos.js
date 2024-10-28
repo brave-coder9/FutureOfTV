@@ -25,6 +25,7 @@ router.get("/", async (req, res) => {
       cors_origin: record.cors_origin,
       passthrough: record.new_asset_settings.passthrough,
       uploadId: record.id,
+      url: record.url,
     }));
     const ids = rows.map((row) => row.passthrough);
 
