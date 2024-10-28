@@ -28,6 +28,16 @@ router.get("/", async (req, res) => {
         passthrough: id,
         playback_policy: ["public"],
         video_quality: "basic",
+        input: [
+          {
+            generated_subtitles: [
+              {
+                language_code: "en",
+                name: "English CC",
+              },
+            ],
+          },
+        ],
       },
     });
     console.log("Success: creating upload url");
