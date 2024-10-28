@@ -6,10 +6,8 @@ const router = express.Router();
 require("dotenv").config();
 
 // Upload Route
-router.post("/", async (req, res) => {
+router.get("/", async (req, res) => {
   const id = uuid();
-  // Go ahead and grab any info you want from the request body.
-  const { description } = req.body;
 
   try {
     // This assumes you have MUX_TOKEN_ID and MUX_TOKEN_SECRET
@@ -33,26 +31,49 @@ router.post("/", async (req, res) => {
       },
     });
     console.log("Success: creating upload url");
-
-    const muxAsset = new MuxAsset({
-      // save the upload ID in case we need to update this based on
-      // 'video.upload' webhook events.
-      id,
-      uploadId: upload.id,
-      metadata: description,
-      status: "waiting_for_upload",
-    });
-
-    await muxAsset.save();
-
-    console.log(`New MuxAsset saved with id: ${id}`);
-    res.json({ id, url: upload.url });
+    res.json({ id, uploadId: upload.id, url: upload.url });
   } catch (error) {
     console.error("Error on muxupload:", error);
     console.error("Error Message:", error.error?.error?.messages?.join(" | "));
     res.status(500).json({
       status: error.status,
       msg: "Error on muxupload",
+    });
+  }
+});
+
+router.post("/save", async (req, res) => {
+  const {
+    id,
+    uploadId,
+    url,
+    status,
+    title,
+    description,
+    chapters = [],
+  } = req.body;
+
+  try {
+    const muxAsset = new MuxAsset({
+      // save the upload ID in case we need to update this based on
+      // 'video.upload' webhook events.
+      id,
+      uploadId,
+      url,
+      status,
+      title,
+      description,
+      chapters,
+    });
+
+    await muxAsset.save();
+    res.json({ status: "success" });
+  } catch (error) {
+    console.error("Error on saving asset:", error);
+    console.error("Error Message:", error.error?.error?.messages?.join(" | "));
+    res.status(500).json({
+      status: error.status,
+      msg: "Error on saving asset",
     });
   }
 });
