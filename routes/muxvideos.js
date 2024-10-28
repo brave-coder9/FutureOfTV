@@ -37,13 +37,14 @@ router.get("/", async (req, res) => {
       if (muxAsset) {
         row.metadata = muxAsset.metadata || "";
         row.chapters = muxAsset.chapters || [];
+        row.url = row.url || muxAsset.url;
       } else {
         row.metadata = "";
         row.chapters = [];
       }
     }
 
-    res.json({ rows });
+    res.json({ data: rows });
   } catch (error) {
     console.error("Error on list videos:", error);
     console.error("Error Message:", error.error?.error?.messages?.join(" | "));
