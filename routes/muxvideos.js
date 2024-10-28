@@ -74,4 +74,31 @@ router.get("/:passthrough", async (req, res) => {
   }
 });
 
+router.get("/asset/:upload_id", async (req, res) => {
+  const { upload_id } = req.params;
+
+  try {
+    const mux = new Mux({
+      tokenId: process.env.MUX_TOKEN_ID,
+      tokenSecret: process.env.MUX_TOKEN_SECRET,
+    });
+
+    const { data } = await mux.video.assets.list({
+      page: 1,
+      limit: 10,
+      upload_id,
+    });
+
+    res.json({ data });
+  } catch (error) {
+    console.error("Error on getting an asset:", error);
+    console.error("Error Message:", error.error?.error?.messages?.join(" | "));
+
+    res.status(500).json({
+      status: error.status,
+      msg: "Error on getting an asset",
+    });
+  }
+});
+
 module.exports = router;
