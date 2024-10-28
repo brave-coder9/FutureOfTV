@@ -54,4 +54,22 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/:passthrough", async (req, res) => {
+  const { passthrough } = req.params;
+
+  try {
+    const muxAsset = await MuxAsset.findOne({ id: passthrough });
+
+    res.json(muxAsset);
+  } catch (error) {
+    console.error("Error on getting a video:", error);
+    console.error("Error Message:", error.error?.error?.messages?.join(" | "));
+
+    res.status(500).json({
+      status: error.status,
+      msg: "Error on getting a video",
+    });
+  }
+});
+
 module.exports = router;
