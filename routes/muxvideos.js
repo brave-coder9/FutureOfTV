@@ -26,7 +26,6 @@ router.get("/", async (req, res) => {
       passthrough: record.new_asset_settings.passthrough,
       uploadId: record.id,
       url: record.url,
-      id: record.id,
     }));
     const ids = rows.map((row) => row.passthrough);
 
