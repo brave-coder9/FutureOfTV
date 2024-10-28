@@ -58,24 +58,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:passthrough", async (req, res) => {
-  const { passthrough } = req.params;
-
-  try {
-    const muxAsset = await MuxAsset.findOne({ id: passthrough });
-
-    res.json(muxAsset);
-  } catch (error) {
-    console.error("Error on getting a video:", error);
-    console.error("Error Message:", error.error?.error?.messages?.join(" | "));
-
-    res.status(500).json({
-      status: error.status,
-      msg: "Error on getting a video",
-    });
-  }
-});
-
 router.get("/asset/:upload_id", async (req, res) => {
   const { upload_id } = req.params;
 
@@ -85,13 +67,24 @@ router.get("/asset/:upload_id", async (req, res) => {
       tokenSecret: process.env.MUX_TOKEN_SECRET,
     });
 
-    const { data } = await mux.video.assets.list({
+    const { data = [] } = await mux.video.assets.list({
       page: 1,
       limit: 10,
       upload_id,
     });
 
-    res.json({ data });
+    const assetInfo = data[0] || {};
+    const passthrough = assetInfo.passthrough;
+    if (!passthrough) {
+      res.status(404).json({
+        status: 404,
+        msg: "Not found the linked asset.",
+      });
+    }
+    const muxAsset = await MuxAsset.findOne({ id: passthrough });
+    console.log({ muxAsset, passthrough });
+
+    res.json({ ...assetInfo, ...(muxAsset || {}) });
   } catch (error) {
     console.error("Error on getting an asset:", error);
     console.error("Error Message:", error.error?.error?.messages?.join(" | "));
