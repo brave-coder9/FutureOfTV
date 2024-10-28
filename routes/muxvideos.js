@@ -84,7 +84,7 @@ router.get("/asset/:upload_id", async (req, res) => {
     const muxAsset = await MuxAsset.findOne({ id: passthrough });
     console.log({ muxAsset, passthrough });
 
-    res.json({ ...assetInfo, ...(muxAsset || {}) });
+    res.json({ assetData: assetInfo, dbData: muxAsset || {} });
   } catch (error) {
     console.error("Error on getting an asset:", error);
     console.error("Error Message:", error.error?.error?.messages?.join(" | "));
