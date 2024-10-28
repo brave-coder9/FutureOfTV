@@ -72,6 +72,9 @@ router.get("/asset/:upload_id", async (req, res) => {
       limit: 10,
       upload_id,
     });
+    const { data: directUploadData } = await mux.video.uploads.retrieve(
+      upload_id
+    );
 
     const assetInfo = data[0] || {};
     const passthrough = assetInfo.passthrough;
@@ -82,9 +85,13 @@ router.get("/asset/:upload_id", async (req, res) => {
       });
     }
     const muxAsset = await MuxAsset.findOne({ id: passthrough });
-    console.log({ muxAsset, passthrough });
+    console.log({ muxAsset, directUploadData, passthrough });
 
-    res.json({ assetData: assetInfo, dbData: muxAsset || {} });
+    res.json({
+      assetData: assetInfo,
+      directUploadData,
+      dbData: muxAsset || {},
+    });
   } catch (error) {
     console.error("Error on getting an asset:", error);
     console.error("Error Message:", error.error?.error?.messages?.join(" | "));
