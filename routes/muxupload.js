@@ -31,10 +31,12 @@ router.get("/", async (req, res) => {
       },
     });
     console.log("Success: creating upload url");
+
     res.json({ id, uploadId: upload.id, url: upload.url });
   } catch (error) {
     console.error("Error on muxupload:", error);
     console.error("Error Message:", error.error?.error?.messages?.join(" | "));
+
     res.status(500).json({
       status: error.status,
       msg: "Error on muxupload",
@@ -67,10 +69,12 @@ router.post("/save", async (req, res) => {
     });
 
     await muxAsset.save();
+
     res.json({ status: "success" });
   } catch (error) {
     console.error("Error on saving asset:", error);
     console.error("Error Message:", error.error?.error?.messages?.join(" | "));
+
     res.status(500).json({
       status: error.status,
       msg: "Error on saving asset",
