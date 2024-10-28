@@ -35,10 +35,12 @@ router.get("/", async (req, res) => {
     for (const row of rows) {
       const muxAsset = muxAssets.find((asset) => asset.id === row.passthrough);
       if (muxAsset) {
+        row.title = muxAsset.title || "";
         row.metadata = muxAsset.metadata || "";
         row.chapters = muxAsset.chapters || [];
         row.url = row.url || muxAsset.url;
       } else {
+        row.title = "";
         row.metadata = "";
         row.chapters = [];
       }
