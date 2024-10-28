@@ -9,7 +9,7 @@ require("dotenv").config();
 router.post("/", async (req, res) => {
   const id = uuid();
   // Go ahead and grab any info you want from the request body.
-  const assetInfo = req.body;
+  const { description } = req.body;
 
   try {
     // This assumes you have MUX_TOKEN_ID and MUX_TOKEN_SECRET
@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
       // 'video.upload' webhook events.
       id,
       uploadId: upload.id,
-      metadata: assetInfo,
+      metadata: description,
       status: "waiting_for_upload",
     });
 
