@@ -8,6 +8,12 @@ router.post("/", async (req, res) => {
     const { type: eventType, data: eventData } = req.body;
 
     switch (eventType) {
+      case "video.asset.track.ready": {
+        // when auto-generated captions is ready.
+        console.log(JSON.stringify(eventData, null, 2));
+        break;
+      }
+
       case "video.asset.created": {
         // This means an Asset was successfully created! We'll get
         // the existing item from the DB first, then update it with the

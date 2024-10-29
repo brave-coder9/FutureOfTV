@@ -55,15 +55,7 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/save", async (req, res) => {
-  const {
-    id,
-    uploadId,
-    url,
-    status,
-    title,
-    description,
-    chapters = [],
-  } = req.body;
+  const { id, uploadId, url, title, description, chapters = [] } = req.body;
 
   try {
     const muxAsset = new MuxAsset({
@@ -72,10 +64,8 @@ router.post("/save", async (req, res) => {
       id,
       uploadId,
       url,
-      status,
       title,
       description,
-      chapters,
     });
 
     await muxAsset.save();
