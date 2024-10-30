@@ -1,5 +1,5 @@
 const OpenAI = require("openai");
-const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const captionsToChapters = async (playbackID, captionsTrackId) => {
   const muxCaptionsURL = `https://stream.mux.com/${playbackID}/text/${captionsTrackId}.vtt`;

@@ -81,7 +81,7 @@ router.get("/asset/:upload_id", async (req, res) => {
     });
     assetInfo = data[0] || {};
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       status: error.status,
       msg: "Error on listing assets with upload_id.",
     });
@@ -92,13 +92,13 @@ router.get("/asset/:upload_id", async (req, res) => {
     directUploadData = data;
     passthrough = assetInfo.passthrough;
     if (!passthrough) {
-      res.status(404).json({
+      return res.status(404).json({
         status: 404,
         msg: "Not found the linked asset.",
       });
     }
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       status: error.status,
       msg: "Error on retrieve direct-upload",
     });
@@ -130,9 +130,11 @@ router.get(
     try {
       chapters = await captionsToChapters(playbackID, captionsTrackId);
     } catch (error) {
-      res.status(500).json({
+      console.error("Error:", error);
+      return res.status(500).json({
         status: error.status,
-        msg: "Error on getting chapters.",
+        code: error.code || "unknown",
+        msg: "Error on getting chapters: " + (error.error?.message || ""),
       });
     }
 
@@ -151,5 +153,24 @@ router.get(
     res.json({ data: chapters });
   }
 );
+
+//
+// Update MuxAsset chapters.
+//
+router.patch("/chapters/:passthrough", async (req, res) => {
+  const { passthrough } = req.params;
+  const { chapters } = req.body;
+  try {
+    const muxAsset = await MuxAsset.findOne({ id: passthrough });
+    muxAsset.chapters = chapters;
+    muxAsset.save();
+    res.json({ status: "success" });
+  } catch (error) {
+    res.status(500).json({
+      status: error.status,
+      msg: "Error on updating chapters to MuxAsset.",
+    });
+  }
+});
 
 module.exports = router;
